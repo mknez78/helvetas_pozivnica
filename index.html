@@ -210,8 +210,8 @@ form.addEventListener('submit', async (e) => {
   // Prepare FormData
   const fd = new FormData(form);
 
-  // FormSubmit expects either an email field or _replyto - we use _replyto
-  if (!fd.get('_replyto')){
+  // FormSubmit expects either an email field or _replyto - we use email
+  if (!fd.get('email')){
     showStatus('error','Unesite validan email / Enter a valid email.');
     return;
   }
