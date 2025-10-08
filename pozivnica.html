@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helvetas - 10 godina u Srbiji</title>
+    <style>
+    :root{
+      --blue:#005D87;
+      --red:#A62C32;
+      --card-bg: rgba(255,255,255,0.95);
+      --text:#111;
+    }
+    html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background-image: url('back.jpg');background-size: cover;background-position: center;background-attachment: fixed;}
+    .wrap{min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:28px 18px}
+    .container{width:100%;max-width:900px;background:var(--card-bg);border:2px solid var(--blue);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.18);overflow:hidden}
+    header{background:var(--red);padding:22px 20px;text-align:center;color:#fff}
+    header .logo{max-width:150px;margin-bottom:10px; margin-left: auto; margin-right: auto;}
+    header h1{margin:0;font-size:2.4rem;line-height:1}
+    main{padding:28px}
+    .lead p{margin:0 0 12px;color:var(--text);font-size:1rem}
+    ul.meta{padding:0;margin:0 0 12px;list-style:none;color:var(--text)}
+    ul.meta li{margin:6px 0;font-weight:600}
+    hr.sep{border:none;border-top:1px solid var(--blue);margin:28px 0}
+    h2{color:var(--blue);text-transform:uppercase;text-align:center;margin:6px 0 18px;font-size:1.4rem}
+    /* Form */
+    .rsvp-form{max-width:680px;margin:0 auto}
+    .form-group{margin-bottom:16px}
+    label{display:block;margin-bottom:6px;font-weight:700;color:var(--blue)}
+    input[type="text"], input[type="email"], select, textarea{
+      width:100%;padding:12px;border:1px solid var(--blue);border-radius:6px;background:#fff;color:var(--text);box-sizing:border-box;
+      font-size: 16px; /* Larger font for better readability */
+    }
+    textarea{resize:vertical;min-height:74px}
+    .radio-group{display:flex;gap:18px;align-items:center}
+    .radio-group label{font-weight:500;color:#222;display:flex;gap:8px;align-items:center}
+    .note{font-size:.95rem;color:#333;text-align:center;margin-bottom:12px}
+    .submit-btn{width:100%;padding:14px;background:var(--blue);color:#fff;border:0;border-radius:8px;font-weight:700;cursor:pointer;transition:transform .12s,background .12s}
+    .submit-btn:hover{transform:translateY(-2px);background:#044c6d}
+    .status{display:none;margin-top:14px;padding:12px;border-radius:8px;font-weight:600}
+    .status.success{background:#e6ffef;color:#03572e;border:1px solid #bff0cf}
+    .status.error{background:#fff1f0;color:#7a1f1f;border:1px solid #f4c2c1}
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .wrap {
+            padding: 15px 10px;
+        }
+        header {
+            padding: 20px 15px;
+        }
+        header .logo {
+            max-width: 140px; /* Slightly smaller logo for medium screens */
+        }
+        header h1 {
+            font-size: 2rem;
+        }
+        main {
+            padding: 20px;
+        }
+        input[type="text"], input[type="email"], select, textarea {
+            padding: 15px; /* Larger touch targets */
+        }
+        .radio-group {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .wrap {
+            padding: 10px 5px;
+        }
+        header {
+            padding: 15px 10px;
+        }
+        header .logo {
+            max-width: 120px; /* Smaller logo for small screens */
+        }
+        header h1 {
+            font-size: 1.6rem;
+        }
+        main {
+            padding: 15px;
+        }
+        label {
+            font-size: .95rem;
+        }
+        .note {
+            font-size: .85rem;
+        }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="logo.png" alt="Logo" style="max-width:100%;height:auto;display:block;margin:0 auto">
+            </div>
+            <h1 id="eventTitle">Helvetas - 10 godina u Srbiji</h1>
+        </header>
+
+        <main>
+            <div class="text-block">
+                <p><strong>Dragi prijatelji, partneri i saradnici,</strong></p>
+                <p>ove godine Helvetas sa ponosom obeležava 10 godina rada u Srbiji. Tokom protekle decenije, ostvarili smo brojne uspehe zahvaljujući posvećenosti, saradnji i poverenju koje ste nam ukazali. Ova proslava je prilika da izrazimo zahvalnost svima koji su bili deo našeg puta.</p>
+                <p>Pozivamo Vas da nam se pridružite na svečanom događaju:</p>
+                <ul>
+                    <li><strong>četvrtak, 6. novembar 2025. godine</strong></li>
+                    <li><strong>od 17 časova</strong></li>
+                    <li><strong>Vig plaza, Trešnjinog cveta 1/VII sprat, Beograd</strong></li>
+                </ul>
+                <p>Radujemo se što ćemo ovaj trenutak podeliti sa Vama!</p>
+                <p><strong>Helvetas tim</strong></p>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #005D87; margin: 30px 0;">
+
+            <div class="text-block">
+                <p><strong>Dear friends, partners and associates,</strong></p>
+                <p>this year, Helvetas proudly celebrates 10 years of work in Serbia. Over the past decade, we have achieved numerous successes thanks to the commitment, cooperation and trust you have placed in us. This celebration is an opportunity to express our gratitude to everyone who has been a part of our journey.</p>
+                <p>We invite you to join us at the festive event:</p>
+                <ul>
+                    <li><strong>Thursday, November 6, 2025</strong></li>
+                    <li><strong>from 5 p.m</strong></li>
+                    <li><strong>Vig plaza, Trešnjinog cveta 1/7th floor, Belgrade</strong></li>
+                </ul>
+                <p>We look forward to sharing this moment with you!</p>
+                <p><strong>Helvetas team</strong></p>
+            </div>
+
+        <section class="rsvp" aria-labelledby="rsvpTitle" style="margin-top:26px">
+          <h2 id="rsvpTitle">Potvrda dolaska / RSVP</h2>
+          <p class="note">Molimo Vas da potvrdite svoj dolazak najkasnije do 30.10.2025.</p>
+
+          <form id="rsvpForm" class="rsvp-form" method="post" novalidate>
+            <!-- FormSubmit hidden settings -->
+            <input type="hidden" name="_subject" value="RSVP: nova prijava">
+            <input type="hidden" name="_template" value="table">
+            <!-- change _next to your thank-you page if you want a redirect -->
+            <input type="hidden" name="_next" value="https://www.miroslavknezevic.com/thank-you.html">
+
+            <div class="form-group">
+              <label for="fullname">Ime i prezime / Name and Surname *</label>
+              <input id="fullname" name="fullname" type="text" placeholder="Ime i prezime" required>
+            </div>
+
+            <div class="form-group">
+              <label>Potvrđujem dolazak / Confirming attendance *</label>
+              <div class="radio-group" role="radiogroup" aria-required="true">
+                <label><input type="radio" name="attendance" value="da" required> Da / Yes</label>
+                <label><input type="radio" name="attendance" value="ne"> Ne / No</label>
+              </div>
+            </div>
+
+
+            <div class="form-group">
+              <label for="email">Email (za potvrdu) / Email (for confirmation) *</label>
+              <input id="email" name="_replyto" type="email" placeholder="vas.email@example.com" required>
+            </div>
+
+            
+
+            <!-- Honeypot for spam protection -->
+            <div style="display:none" aria-hidden="true">
+              <label>Leave blank</label>
+              <input type="text" name="_honey" tabindex="-1" autocomplete="off">
+            </div>
+
+            <button type="submit" class="submit-btn">Potvrdi / Confirm</button>
+
+            <div id="status" class="status" role="status" aria-live="polite"></div>
+          </form>
+        </section>
+        </main>
+    </div>
+</div>
+    <script>
+    (function(){
+      const form = document.getElementById('rsvpForm');
+      const status = document.getElementById('status');
+
+
+      function showStatus(type, text){
+        status.className = 'status ' + (type === 'success' ? 'success' : 'error');
+        status.textContent = text;
+        status.style.display = 'block';
+      }
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  // basic client validation
+  if (!form.checkValidity()){
+    form.reportValidity();
+    return;
+  }
+
+  // honeypot
+  const honey = form.querySelector('input[name="_honey"]');
+  if (honey && honey.value) return;
+
+  // Prepare FormData
+  const fd = new FormData(form);
+
+  // FormSubmit expects either an email field or _replyto - we use _replyto
+  if (!fd.get('_replyto')){
+    showStatus('error','Unesite validan email / Enter a valid email.');
+    return;
+  }
+
+  // FormSubmit AJAX endpoint (replace if you want other target)
+  const endpoint = 'https://formsubmit.co/ajax/m1roslav@hotmail.com';
+
+  showStatus('success','Šaljem prijavu... / Sending RSVP...');
+
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      body: fd,
+      headers: { 'Accept': 'application/json' }
+    });
+    const json = await res.json();
+    if (json.success){
+      showStatus('success','Hvala — vaša prijava je zaprimljena. / Thank you — your RSVP has been received.');
+      form.reset();
+    } else {
+      showStatus('error','Greška pri slanju: ' + (json.message || res.statusText));
+    }
+  } catch (err) {
+    console.error(err);
+    showStatus('error','Greška pri slanju. Pokušajte ponovo. / Error sending. Please try again.');
+  }
+});
+    })();
+  </script>
+
+</body>
+</html>
