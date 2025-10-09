@@ -139,13 +139,7 @@
           <p class="note">Molimo Vas da potvrdite svoj dolazak najkasnije do 30.10.2025.<br>Please confirm your arrival no later than 30.10.2025.</p>
 
           <form id="rsvpForm" class="rsvp-form" method="post" novalidate>
-            <!-- FormSubmit hidden settings -->
-            <input type="hidden" name="_subject" value="RSVP: nova prijava">
-            <input type="hidden" name="_template" value="table">
-            <input type="hidden" name="_to" value="m1roslav@hotmail.com,Masa.Babic@helvetas.org">
-            <input type="hidden" name="_autoresponse" value="Vaša prijava je uspešno poslata. Hvala na potvrdi dolaska!">
-            <!-- change _next to your thank-you page if you want a redirect -->
-            <input type="hidden" name="_next" value="https://www.miroslavknezevic.com/thank-you.html">
+            <!-- EmailJS integration -->
 
             <div class="form-group">
               <label for="fullname">Ime i prezime / Name and Surname *</label>
@@ -194,11 +188,10 @@
         status.style.display = 'block';
       }
 
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', function(e) {
   e.preventDefault();
 
-  // basic client validation
-  if (!form.checkValidity()){
+  if (!form.checkValidity()) {
     form.reportValidity();
     return;
   }
@@ -207,40 +200,25 @@ form.addEventListener('submit', async (e) => {
   const honey = form.querySelector('input[name="_honey"]');
   if (honey && honey.value) return;
 
-  // Prepare FormData
-  const fd = new FormData(form);
+  showStatus('success', 'Šaljem prijavu... / Sending RSVP...');
 
-  // FormSubmit expects either an email field or _replyto - we use email
-  if (!fd.get('email')){
-    showStatus('error','Unesite validan email / Enter a valid email.');
-    return;
-  }
-
-  // FormSubmit AJAX endpoint (replace if you want other target)
-  const endpoint = 'https://formsubmit.co/ajax/m1roslav@hotmail.com';
-
-  showStatus('success','Šaljem prijavu... / Sending RSVP...');
-
-  try {
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      body: fd,
-      headers: { 'Accept': 'application/json' }
-    });
-    const json = await res.json();
-    if (json.success){
-      showStatus('success','Hvala — vaša prijava je zaprimljena. / Thank you — your RSVP has been received.');
+  emailjs.sendForm('service_j33huvu', 'template_ibymvyu', form, 'L147P795DyaRAnffF')
+    .then(function() {
+      showStatus('success', 'Hvala — vaša prijava je zaprimljena. / Thank you — your RSVP has been received.');
       form.reset();
-    } else {
-      showStatus('error','Greška pri slanju: ' + (json.message || res.statusText));
-    }
-  } catch (err) {
-    console.error(err);
-    showStatus('error','Greška pri slanju. Pokušajte ponovo. / Error sending. Please try again.');
-  }
+    }, function(error) {
+      console.error(error);
+      showStatus('error', 'Greška pri slanju. Pokušajte ponovo. / Error sending. Please try again.');
+    });
 });
     })();
-  </script>
+    </script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+      (function(){
+        emailjs.init('L147P795DyaRAnffF');
+      })();
+    </script>
 
 </body>
 </html>
