@@ -11,8 +11,45 @@
       --card-bg: rgba(255,255,255,0.95);
       --text:#111;
     }
-    html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background-image: url('back.jpg');background-size: cover;background-position: center;background-attachment: fixed;}
-    .wrap{min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:28px 18px}
+    html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;}
+    #video-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+    }
+    .welcome-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+        color: white;
+        text-align: center;
+    }
+    .welcome-screen img {
+        max-width: 200px;
+        margin-bottom: 20px;
+    }
+    .welcome-screen button {
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        background: var(--blue);
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:28px 18px; display: none; box-sizing: border-box;}
     .container{width:100%;max-width:900px;background:var(--card-bg);border:2px solid var(--blue);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.18);overflow:hidden}
     header{background:var(--red);padding:22px 20px;text-align:center;color:#fff}
     header .logo{max-width:150px;margin-bottom:10px; margin-left: auto; margin-right: auto;}
@@ -94,7 +131,18 @@
   </style>
 </head>
 <body>
-<div class="wrap">
+
+<video id="video-bg" autoplay muted loop>
+    <source src="videoMK.mp4" type="video/mp4">
+</video>
+
+<div class="welcome-screen" id="welcomeScreen">
+    <img src="logo.png" alt="Logo">
+    <h2>Dobrodošli / Welcome</h2>
+    <button id="enterButton">Pogledajte pozivnicu / View Invitation</button>
+</div>
+
+<div class="wrap" id="mainContent">
     <div class="container">
         <header>
             <div class="logo">
@@ -177,6 +225,11 @@
     </div>
 </div>
     <script>
+    document.getElementById('enterButton').addEventListener('click', function() {
+        document.getElementById('welcomeScreen').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'flex';
+    });
+
     (function(){
       const form = document.getElementById('rsvpForm');
       const status = document.getElementById('status');
