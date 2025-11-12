@@ -472,17 +472,32 @@
 
     // RSVP form with EmailJS - Secure version using Vercel environment variables
     (function(){
-      // EmailJS credentials - these will be replaced by Vercel during build
-      // For local testing, we'll use a fallback that shows an error message
-      let USER_ID = 'YOUR_USER_ID'; // This will be replaced by Vercel
-      let SERVICE_ID = 'YOUR_SERVICE_ID'; // This will be replaced by Vercel
-      let TEMPLATE_ID = 'YOUR_TEMPLATE_ID'; // This will be replaced by Vercel
+      // This is the key fix - we need to properly handle Vercel environment variables
+      // The variables should be available as global variables in Vercel builds
+      let USER_ID = null;
+      let SERVICE_ID = null;
+      let TEMPLATE_ID = null;
       
-      // Check if we're in a Vercel environment by looking for the actual values
-      // If these are still the placeholder values, we're in local testing mode
-      const isLocalTesting = USER_ID === 'YOUR_USER_ID' || 
-                            SERVICE_ID === 'YOUR_SERVICE_ID' || 
-                            TEMPLATE_ID === 'YOUR_TEMPLATE_ID';
+      // Try to get the environment variables from Vercel
+      // Vercel injects these during build time
+      try {
+        // Check if we're in Vercel environment
+        if (typeof window !== 'undefined') {
+          // Vercel will inject these as global variables during build
+          USER_ID = window.EMAILJS_USER_ID || null;
+          SERVICE_ID = window.EMAILJS_SERVICE_ID || null;
+          TEMPLATE_ID = window.EMAILJS_TEMPLATE_ID || null;
+        }
+      } catch(e) {
+        console.warn('Could not access Vercel environment variables:', e);
+      }
+      
+      // If we still don't have the variables, we'll show an error message
+      if (!USER_ID || !SERVICE_ID || !TEMPLATE_ID) {
+        console.warn('EmailJS credentials not found in Vercel environment. This is expected for local testing.');
+        // For Vercel deployment, these should be set properly
+        // We'll show a helpful message instead of breaking
+      }
       
       // Wait for EmailJS to be loaded
       function initEmailJS() {
@@ -491,13 +506,12 @@
           if (USER_ID && USER_ID !== 'YOUR_USER_ID') {
             emailjs.init(USER_ID);
           } else {
-            // Show error message for local testing
-            console.error('EmailJS configuration error - this is expected for local testing');
-            // Don't initialize EmailJS for local testing, but show error message
+            // Show error message for Vercel deployment if credentials missing
+            console.error('EmailJS User ID is missing or invalid');
             const status = document.getElementById('status');
             if (status) {
               status.className = 'status error';
-              status.textContent = 'Greška u konfiguraciji. Ova forma funkcioniše samo kada je deployovana na Vercel.';
+              status.textContent = 'Greška u konfiguraciji. Kontaktirajte administratora.';
               status.style.display = 'block';
             }
             return;
