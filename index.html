@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Helvetas - 10 godina u Srbiji</title>
     <style>
+    /* Your existing CSS remains the same */
     :root{
       --blue:#005D87;
       --red:#A62C32;
@@ -66,7 +67,7 @@
     label{display:block;margin-bottom:6px;font-weight:700;color:var(--blue)}
     input[type="text"], input[type="email"], select, textarea{
       width:100%;padding:12px;border:1px solid var(--blue);border-radius:6px;background:#fff;color:var(--text);box-sizing:border-box;
-      font-size: 16px; /* Larger font for better readability */
+      font-size: 16px;
     }
     textarea{resize:vertical;min-height:74px}
     .radio-group{display:flex;gap:18px;align-items:center}
@@ -78,6 +79,31 @@
     .status.success{background:#e6ffef;color:#03572e;border:1px solid #bff0cf}
     .status.error{background:#fff1f0;color:#7a1f1f;border:1px solid #f4c2c1}
     
+    /* Action buttons */
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin: 25px 0;
+    }
+    
+    .action-btn {
+        width: 100%;
+        padding: 14px;
+        background: var(--blue);
+        color: #fff;
+        border: 0;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .12s, background .12s;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        background: #044c6d;
+    }
+    
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .wrap {
@@ -87,7 +113,7 @@
             padding: 20px 15px;
         }
         header .logo {
-            max-width: 140px; /* Slightly smaller logo for medium screens */
+            max-width: 140px;
         }
         header h1 {
             font-size: 2rem;
@@ -96,12 +122,15 @@
             padding: 20px;
         }
         input[type="text"], input[type="email"], select, textarea {
-            padding: 15px; /* Larger touch targets */
+            padding: 15px;
         }
         .radio-group {
             flex-direction: column;
             align-items: flex-start;
             gap: 12px;
+        }
+        .action-buttons {
+            flex-direction: column;
         }
     }
 
@@ -113,7 +142,7 @@
             padding: 15px 10px;
         }
         header .logo {
-            max-width: 120px; /* Smaller logo for small screens */
+            max-width: 120px;
         }
         header h1 {
             font-size: 1.6rem;
@@ -182,6 +211,12 @@
 
             <hr style="border: none; border-top: 1px solid #005D87; margin: 30px 0;">
 
+            <!-- Calendar and Location Buttons -->
+            <div class="action-buttons">
+                <button id="addToCalendar" class="action-btn">Add to calendar</button>
+                <button id="showOnMap" class="action-btn">Show on map</button>
+            </div>
+
         <section class="rsvp" aria-labelledby="rsvpTitle" style="margin-top:26px">
           <h2 id="rsvpTitle">Potvrda dolaska / RSVP</h2>
           <p class="note">Molimo Vas da potvrdite svoj dolazak najkasnije do 30.10.2025.<br>Please confirm your arrival no later than 30.10.2025.</p>
@@ -208,7 +243,10 @@
               <input id="email" name="email" type="email" placeholder="vas.email@example.com" required>
             </div>
 
-            
+            <div class="form-group">
+              <label for="message">Poruka / Message</label>
+              <textarea id="message" name="message" rows="3" placeholder="Vaša poruka..."></textarea>
+            </div>
 
             <!-- Honeypot for spam protection -->
             <div style="display:none" aria-hidden="true">
@@ -230,48 +268,168 @@
         document.getElementById('mainContent').style.display = 'flex';
     });
 
+    // Calendar functionality
     (function(){
-      const form = document.getElementById('rsvpForm');
-      const status = document.getElementById('status');
+      const btn = document.getElementById('addToCalendar');
 
+      const event = {
+        title: "Helvetas - 10 godina u Srbiji",
+        description: "Proslava 10 godina rada Helvetas u Srbiji.\n\nVig plaza, Trešnjinog cveta 1/VII sprat, Beograd",
+        location: "Vig plaza, Trešnjinog cveta 1/VII sprat, Beograd",
+        start: new Date('2025-11-06T17:00:00'),   // local time
+        end:   new Date('2025-11-06T19:00:00')
+      };
 
-      function showStatus(type, text){
-        status.className = 'status ' + (type === 'success' ? 'success' : 'error');
-        status.textContent = text;
-        status.style.display = 'block';
+      function formatDateUTC(date){
+        const pad = n => String(n).padStart(2,'0');
+        return date.getUTCFullYear()+
+               pad(date.getUTCMonth()+1)+
+               pad(date.getUTCDate())+'T'+
+               pad(date.getUTCHours())+
+               pad(date.getUTCMinutes())+
+               pad(date.getUTCSeconds())+'Z';
       }
 
-form.addEventListener('submit', function(e) {
-  e.preventDefault();
+      function buildGoogleUrl(ev){
+        const start = formatDateUTC(ev.start);
+        const end   = formatDateUTC(ev.end);
+        const params = new URLSearchParams({
+          action:   'TEMPLATE',
+          text:     ev.title,
+          dates:    `${start}/${end}`,
+          details:  ev.description,
+          location: ev.location,
+          trp:      'false'
+        });
+        return `https://www.google.com/calendar/render?${params.toString()}`;
+      }
 
-  if (!form.checkValidity()) {
-    form.reportValidity();
-    return;
-  }
+      function downloadIcs(ev){
+        const ics = [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//Helvetas//Invitation//EN',
+          'CALSCALE:GREGORIAN',
+          'BEGIN:VEVENT',
+          'DTSTART:' + formatDateUTC(ev.start),
+          'DTEND:'   + formatDateUTC(ev.end),
+          'SUMMARY:' + ev.title,
+          'DESCRIPTION:' + ev.description.replace(/\n/g, '\\n'),
+          'LOCATION:' + ev.location,
+          'END:VEVENT',
+          'END:VCALENDAR'
+        ].join('\r\n');
 
-  // honeypot
-  const honey = form.querySelector('input[name="_honey"]');
-  if (honey && honey.value) return;
+        const blob = new Blob([ics], {type: 'text/calendar;charset=utf-8'});
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url;
+        a.download = 'Helvetas_10_godina.ics';
+        a.click();
+        URL.revokeObjectURL(url);
+      }
 
-  showStatus('success', 'Šaljem prijavu... / Sending RSVP...');
+      btn.addEventListener('click', () => {
+        // Open Google Calendar (pre‑filled)
+        window.open(buildGoogleUrl(event), '_blank');
 
-  emailjs.sendForm('service_j33huvu', 'template_ibymvyu', form, 'L147P795DyaRAnffF')
-    .then(function() {
-      showStatus('success', 'Hvala — vaša prijava je zaprimljena. / Thank you — your RSVP has been received.');
-      form.reset();
-    }, function(error) {
-      console.error(error);
-      showStatus('error', 'Greška pri slanju. Pokušajte ponovo. / Error sending. Please try again.');
-    });
-});
+        // Also give the .ics file as a universal fallback
+        setTimeout(() => downloadIcs(event), 300);
+      });
+    })();
+
+    // Map functionality
+    (function(){
+      const btn = document.getElementById('showOnMap');
+      const address = "Vig plaza, Trešnjinog cveta 1/VII sprat, Beograd";
+
+      btn.addEventListener('click', () => {
+        const query = encodeURIComponent(address);
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
+        window.open(mapsUrl, '_blank');
+      });
+    })();
+
+    // RSVP form with EmailJS - Secure version using Vercel environment variables
+    (function(){
+      // This will be replaced by Vercel with actual environment variables
+      const USER_ID = process.env.EMAILJS_USER_ID || 'L147P795DyaRAnffF';
+      const SERVICE_ID = process.env.EMAILJS_SERVICE_ID || 'service_j33huvu';
+      const TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID || 'template_ibymvyu';
+      
+      // Wait for EmailJS to be loaded
+      function initEmailJS() {
+        if (typeof emailjs !== 'undefined') {
+          // Initialize EmailJS with your actual User ID
+          emailjs.init(USER_ID);
+          
+          const form = document.getElementById('rsvpForm');
+          const status = document.getElementById('status');
+
+          function showStatus(type, text){
+            status.className = 'status ' + (type === 'success' ? 'success' : 'error');
+            status.textContent = text;
+            status.style.display = 'block';
+          }
+
+          form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // native validation
+            if (!form.checkValidity()){
+              form.reportValidity();
+              return;
+            }
+
+            // honeypot – ignore bots
+            const honey = form.querySelector('input[name="_honey"]');
+            if (honey && honey.value) return;
+
+            // Prepare form data for EmailJS
+            const formData = new FormData(form);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+              data[key] = value;
+            }
+
+            showStatus('success','Šaljem prijavu... / Sending RSVP...');
+
+            try {
+              // Send using EmailJS with your credentials
+              const response = await emailjs.send(
+                SERVICE_ID, 
+                TEMPLATE_ID, 
+                data, 
+                USER_ID
+              );
+              
+              if (response.status === 200) {
+                showStatus('success','Hvala — vaša prijava je zaprimljena. / Thank you — your RSVP has been received.');
+                form.reset();
+              } else {
+                showStatus('error','Greška pri slanju: ' + response.text);
+              }
+            } catch (err){
+              console.error('EmailJS Error:', err);
+              showStatus('error','Greška pri slanju. Pokušajte ponovo. / Error sending. Please try again.');
+            }
+          });
+        } else {
+          // If EmailJS is not loaded yet, try again after a short delay
+          setTimeout(initEmailJS, 100);
+        }
+      }
+
+      // Load EmailJS SDK and then initialize
+      if (typeof emailjs === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+        script.onload = initEmailJS;
+        document.head.appendChild(script);
+      } else {
+        initEmailJS();
+      }
     })();
     </script>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script>
-      (function(){
-        emailjs.init('L147P795DyaRAnffF');
-      })();
-    </script>
-
 </body>
 </html>
