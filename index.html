@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Helvetas - 10 godina u Srbiji</title>
     <style>
+    /* Your existing CSS remains the same */
     :root{
       --blue:#005D87;
       --red:#A62C32;
@@ -54,6 +55,30 @@
     header{background:var(--red);padding:22px 20px;text-align:center;color:#fff}
     header .logo{max-width:150px;margin-bottom:10px; margin-left: auto; margin-right: auto;}
     header h1{margin:0;font-size:2.4rem;line-height:1}
+    header .language-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 15px;
+    }
+    header .language-buttons button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    header .language-buttons button:hover {
+        background: rgba(255,255,255,0.3);
+    }
+    header .language-buttons button.active {
+        background: white;
+        color: var(--red);
+        font-weight: bold;
+    }
     main{padding:28px}
     .lead p{margin:0 0 12px;color:var(--text);font-size:1rem}
     ul.meta{padding:0;margin:0 0 12px;list-style:none;color:var(--text)}
@@ -103,6 +128,14 @@
         background: #044c6d;
     }
     
+    /* Language content blocks */
+    .language-content {
+        display: none;
+    }
+    .language-content.active {
+        display: block;
+    }
+    
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .wrap {
@@ -130,6 +163,9 @@
         }
         .action-buttons {
             flex-direction: column;
+        }
+        header .language-buttons {
+            flex-wrap: wrap;
         }
     }
 
@@ -177,87 +213,146 @@
                 <img src="logo.png" alt="Logo" style="max-width:100%;height:auto;display:block;margin:0 auto">
             </div>
             <h1 id="eventTitle">Helvetas - 10 godina u Srbiji</h1>
+            <div class="language-buttons">
+                <button id="srButton" class="active">Srpski</button>
+                <button id="enButton">English</button>
+            </div>
         </header>
 
         <main>
-            <div class="text-block">
-                <p><strong>Dragi prijatelji, partneri i saradnici,</strong></p>
-                <p>Ove godine Helvetas sa ponosom obeležava 10 godina rada u Srbiji. Tokom protekle decenije, ostvarili smo brojne uspehe zahvaljujući posvećenosti, saradnji i poverenju koje ste nam ukazali. Ova proslava je prilika da izrazimo zahvalnost svima koji su bili deo našeg puta.</p>
-                <p>Pozivamo Vas da nam se pridružite na svečanom događaju:</p>
-                <ul>
-                    <li><strong>četvrtak, 6. novembar 2025. godine</strong></li>
-                    <li><strong>od 17 časova</strong></li>
-                    <li><strong>Vig plaza, Trešnjinog cveta 1/VII sprat, Beograd</strong></li>
-                </ul>
-                <p>Radujemo se što ćemo ovaj trenutak podeliti sa Vama!</p>
-                <p><strong>Helvetas tim</strong></p>
+            <!-- Serbian Content -->
+            <div id="srContent" class="language-content active">
+                <div class="text-block">
+                    <p><strong>Dragi prijatelji, partneri i saradnici,</strong></p>
+                    <p>Ove godine Helvetas sa ponosom obeležava 10 godina rada u Srbiji. Tokom protekle decenije, ostvarili smo brojne uspehe zahvaljujući posvećenosti, saradnji i poverenju koje ste nam ukazali. Ova proslava je prilika da izrazimo zahvalnost svima koji su bili deo našeg puta.</p>
+                    <p>Pozivamo Vas da nam se pridružite na svečanom događaju:</p>
+                    <ul>
+                        <li><strong>četvrtak, 6. novembar 2025. godine</strong></li>
+                        <li><strong>od 17 časova</strong></li>
+                        <li><strong>Vig plaza, Trešnjinog cveta 1/VII sprat, Beograd</strong></li>
+                    </ul>
+                    <p>Radujemo se što ćemo ovaj trenutak podeliti sa Vama!</p>
+                    <p><strong>Helvetas tim</strong></p>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid #005D87; margin: 30px 0;">
+
+                <!-- Calendar and Location Buttons -->
+                <div class="action-buttons">
+                    <button id="addToCalendar" class="action-btn">Dodaj u kalendar</button>
+                    <button id="showOnMap" class="action-btn">Prikaži na mapi</button>
+                </div>
+
+                <section class="rsvp" aria-labelledby="rsvpTitle" style="margin-top:26px">
+                    <h2 id="rsvpTitle">Potvrda dolaska</h2>
+                    <p class="note">Molimo Vas da potvrdite svoj dolazak najkasnije do 30.10.2025.</p>
+
+                    <form id="rsvpForm" class="rsvp-form" method="post" novalidate>
+                        <!-- EmailJS integration -->
+                        <!-- Credentials will be replaced by Vercel environment variables -->
+
+                        <div class="form-group">
+                            <label for="fullname">Ime i prezime *</label>
+                            <input id="fullname" name="fullname" type="text" placeholder="Ime i prezime" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Potvrđujem dolazak *</label>
+                            <div class="radio-group" role="radiogroup" aria-required="true">
+                                <label><input type="radio" name="attendance" value="da" required> Da</label>
+                                <label><input type="radio" name="attendance" value="ne"> Ne</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email (za potvrdu) *</label>
+                            <input id="email" name="email" type="email" placeholder="vas.email@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Poruka</label>
+                            <textarea id="message" name="message" rows="3" placeholder="Vaša poruka..."></textarea>
+                        </div>
+
+                        <!-- Honeypot for spam protection -->
+                        <div style="display:none" aria-hidden="true">
+                            <label>Leave blank</label>
+                            <input type="text" name="_honey" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <button type="submit" class="submit-btn">Potvrdi</button>
+
+                        <div id="status" class="status" role="status" aria-live="polite"></div>
+                    </form>
+                </section>
             </div>
 
-            <hr style="border: none; border-top: 1px solid #005D87; margin: 30px 0;">
+            <!-- English Content -->
+            <div id="enContent" class="language-content">
+                <div class="text-block">
+                    <p><strong>Dear friends, partners and associates,</strong></p>
+                    <p>This year, Helvetas proudly celebrates 10 years of work in Serbia. Over the past decade, we have achieved numerous successes thanks to the commitment, cooperation and trust you have placed in us. This celebration is an opportunity to express our gratitude to everyone who has been a part of our journey.</p>
+                    <p>We invite you to join us at the festive event:</p>
+                    <ul>
+                        <li><strong>Thursday, November 6th, 2025</strong></li>
+                        <li><strong>from 5 p.m</strong></li>
+                        <li><strong>Vig plaza, Trešnjinog cveta 1/7th floor, Belgrade</strong></li>
+                    </ul>
+                    <p>We look forward to sharing this moment with you!</p>
+                    <p><strong>Helvetas team</strong></p>
+                </div>
 
-            <div class="text-block">
-                <p><strong>Dear friends, partners and associates,</strong></p>
-                <p>This year, Helvetas proudly celebrates 10 years of work in Serbia. Over the past decade, we have achieved numerous successes thanks to the commitment, cooperation and trust you have placed in us. This celebration is an opportunity to express our gratitude to everyone who has been a part of our journey.</p>
-                <p>We invite you to join us at the festive event:</p>
-                <ul>
-                    <li><strong>Thursday, November 6th, 2025</strong></li>
-                    <li><strong>from 5 p.m</strong></li>
-                    <li><strong>Vig plaza, Trešnjinog cveta 1/7th floor, Belgrade</strong></li>
-                </ul>
-                <p>We look forward to sharing this moment with you!</p>
-                <p><strong>Helvetas team</strong></p>
+                <hr style="border: none; border-top: 1px solid #005D87; margin: 30px 0;">
+
+                <!-- Calendar and Location Buttons -->
+                <div class="action-buttons">
+                    <button id="addToCalendarEn" class="action-btn">Add to calendar</button>
+                    <button id="showOnMapEn" class="action-btn">Show on map</button>
+                </div>
+
+                <section class="rsvp" aria-labelledby="rsvpTitleEn" style="margin-top:26px">
+                    <h2 id="rsvpTitleEn">RSVP</h2>
+                    <p class="note">Please confirm your arrival no later than 30.10.2025.</p>
+
+                    <form id="rsvpFormEn" class="rsvp-form" method="post" novalidate>
+                        <!-- EmailJS integration -->
+                        <!-- Credentials will be replaced by Vercel environment variables -->
+
+                        <div class="form-group">
+                            <label for="fullnameEn">Name and Surname *</label>
+                            <input id="fullnameEn" name="fullname" type="text" placeholder="Name and Surname" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Confirming attendance *</label>
+                            <div class="radio-group" role="radiogroup" aria-required="true">
+                                <label><input type="radio" name="attendance" value="yes" required> Yes</label>
+                                <label><input type="radio" name="attendance" value="no"> No</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emailEn">Email (for confirmation) *</label>
+                            <input id="emailEn" name="email" type="email" placeholder="your.email@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="messageEn">Message</label>
+                            <textarea id="messageEn" name="message" rows="3" placeholder="Your message..."></textarea>
+                        </div>
+
+                        <!-- Honeypot for spam protection -->
+                        <div style="display:none" aria-hidden="true">
+                            <label>Leave blank</label>
+                            <input type="text" name="_honey" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <button type="submit" class="submit-btn">Confirm</button>
+
+                        <div id="statusEn" class="status" role="status" aria-live="polite"></div>
+                    </form>
+                </section>
             </div>
-
-            <hr style="border: none; border-top: 1px solid #005D87; margin: 30px 0;">
-
-            <!-- Calendar and Location Buttons -->
-            <div class="action-buttons">
-                <button id="addToCalendar" class="action-btn">Add to calendar</button>
-                <button id="showOnMap" class="action-btn">Show on map</button>
-            </div>
-
-        <section class="rsvp" aria-labelledby="rsvpTitle" style="margin-top:26px">
-          <h2 id="rsvpTitle">Potvrda dolaska / RSVP</h2>
-          <p class="note">Molimo Vas da potvrdite svoj dolazak najkasnije do 30.10.2025.<br>Please confirm your arrival no later than 30.10.2025.</p>
-
-          <form id="rsvpForm" class="rsvp-form" method="post" novalidate>
-            <!-- EmailJS integration -->
-
-            <div class="form-group">
-              <label for="fullname">Ime i prezime / Name and Surname *</label>
-              <input id="fullname" name="fullname" type="text" placeholder="Ime i prezime" required>
-            </div>
-
-            <div class="form-group">
-              <label>Potvrđujem dolazak / Confirming attendance *</label>
-              <div class="radio-group" role="radiogroup" aria-required="true">
-                <label><input type="radio" name="attendance" value="da" required> Da / Yes</label>
-                <label><input type="radio" name="attendance" value="ne"> Ne / No</label>
-              </div>
-            </div>
-
-
-            <div class="form-group">
-              <label for="email">Email (za potvrdu) / Email (for confirmation) *</label>
-              <input id="email" name="email" type="email" placeholder="vas.email@example.com" required>
-            </div>
-
-            <div class="form-group">
-              <label for="message">Poruka / Message</label>
-              <textarea id="message" name="message" rows="3" placeholder="Vaša poruka..."></textarea>
-            </div>
-
-            <!-- Honeypot for spam protection -->
-            <div style="display:none" aria-hidden="true">
-              <label>Leave blank</label>
-              <input type="text" name="_honey" tabindex="-1" autocomplete="off">
-            </div>
-
-            <button type="submit" class="submit-btn">Potvrdi / Confirm</button>
-
-            <div id="status" class="status" role="status" aria-live="polite"></div>
-          </form>
-        </section>
         </main>
     </div>
 </div>
@@ -267,9 +362,25 @@
         document.getElementById('mainContent').style.display = 'flex';
     });
 
+    // Language switching functionality
+    document.getElementById('srButton').addEventListener('click', function() {
+        document.getElementById('srContent').classList.add('active');
+        document.getElementById('enContent').classList.remove('active');
+        document.getElementById('srButton').classList.add('active');
+        document.getElementById('enButton').classList.remove('active');
+    });
+
+    document.getElementById('enButton').addEventListener('click', function() {
+        document.getElementById('enContent').classList.add('active');
+        document.getElementById('srContent').classList.remove('active');
+        document.getElementById('enButton').classList.add('active');
+        document.getElementById('srButton').classList.remove('active');
+    });
+
     // Calendar functionality
     (function(){
       const btn = document.getElementById('addToCalendar');
+      const btnEn = document.getElementById('addToCalendarEn');
 
       const event = {
         title: "Helvetas - 10 godina u Srbiji",
@@ -328,11 +439,14 @@
         URL.revokeObjectURL(url);
       }
 
+      // Both buttons use the same event handler
       btn.addEventListener('click', () => {
-        // Open Google Calendar (pre‑filled)
         window.open(buildGoogleUrl(event), '_blank');
-
-        // Also give the .ics file as a universal fallback
+        setTimeout(() => downloadIcs(event), 300);
+      });
+      
+      btnEn.addEventListener('click', () => {
+        window.open(buildGoogleUrl(event), '_blank');
         setTimeout(() => downloadIcs(event), 300);
       });
     })();
@@ -340,6 +454,7 @@
     // Map functionality
     (function(){
       const btn = document.getElementById('showOnMap');
+      const btnEn = document.getElementById('showOnMapEn');
       const address = "Vig plaza, Trešnjinog cveta 1/VII sprat, Beograd";
 
       btn.addEventListener('click', () => {
@@ -347,14 +462,21 @@
         const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
         window.open(mapsUrl, '_blank');
       });
+      
+      btnEn.addEventListener('click', () => {
+        const query = encodeURIComponent(address);
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
+        window.open(mapsUrl, '_blank');
+      });
     })();
 
-    // RSVP form with EmailJS - Fixed version with proper error handling
+    // RSVP form with EmailJS - Secure version using Vercel environment variables
     (function(){
-      // Initialize EmailJS with environment variables or fallback to hardcoded values
-      const USER_ID = 'L147P795DyaRAnffF'; // This will be replaced by Vercel
-      const SERVICE_ID = 'service_j33huvu'; // This will be replaced by Vercel
-      const TEMPLATE_ID = 'template_ibymvyu'; // This will be replaced by Vercel
+      // EmailJS credentials will be replaced by Vercel environment variables
+      // These are placeholders that will be substituted at build time
+      const USER_ID = process.env.EMAILJS_USER_ID;
+      const SERVICE_ID = process.env.EMAILJS_SERVICE_ID;
+      const TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID;
       
       // Wait for EmailJS to be loaded
       function initEmailJS() {
@@ -363,12 +485,15 @@
           emailjs.init(USER_ID);
           
           const form = document.getElementById('rsvpForm');
+          const formEn = document.getElementById('rsvpFormEn');
           const status = document.getElementById('status');
+          const statusEn = document.getElementById('statusEn');
 
-          function showStatus(type, text){
-            status.className = 'status ' + (type === 'success' ? 'success' : 'error');
-            status.textContent = text;
-            status.style.display = 'block';
+          function showStatus(type, text, target){
+            const statusElement = target || (type === 'success' ? status : statusEn);
+            statusElement.className = 'status ' + (type === 'success' ? 'success' : 'error');
+            statusElement.textContent = text;
+            statusElement.style.display = 'block';
           }
 
           form.addEventListener('submit', async (e) => {
@@ -391,7 +516,7 @@
               data[key] = value;
             }
 
-            showStatus('success','Šaljem prijavu... / Sending RSVP...');
+            showStatus('success','Šaljem prijavu...');
 
             try {
               // Send using EmailJS with your credentials
@@ -403,14 +528,57 @@
               );
               
               if (response.status === 200) {
-                showStatus('success','Hvala — vaša prijava je zaprimljena. / Thank you — your RSVP has been received.');
+                showStatus('success','Hvala — vaša prijava je zaprimljena.', form);
                 form.reset();
               } else {
-                showStatus('error','Greška pri slanju: ' + response.text);
+                showStatus('error','Greška pri slanju: ' + response.text, form);
               }
             } catch (err){
               console.error('EmailJS Error:', err);
-              showStatus('error','Greška pri slanju. Pokušajte ponovo. / Error sending. Please try again.');
+              showStatus('error','Greška pri slanju. Pokušajte ponovo.', form);
+            }
+          });
+          
+          formEn.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // native validation
+            if (!formEn.checkValidity()){
+              formEn.reportValidity();
+              return;
+            }
+
+            // honeypot – ignore bots
+            const honey = formEn.querySelector('input[name="_honey"]');
+            if (honey && honey.value) return;
+
+            // Prepare form data for EmailJS
+            const formData = new FormData(formEn);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+              data[key] = value;
+            }
+
+            showStatus('success','Sending RSVP...', formEn);
+
+            try {
+              // Send using EmailJS with your credentials
+              const response = await emailjs.send(
+                SERVICE_ID, 
+                TEMPLATE_ID, 
+                data, 
+                USER_ID
+              );
+              
+              if (response.status === 200) {
+                showStatus('success','Thank you — your RSVP has been received.', formEn);
+                formEn.reset();
+              } else {
+                showStatus('error','Error sending: ' + response.text, formEn);
+              }
+            } catch (err){
+              console.error('EmailJS Error:', err);
+              showStatus('error','Error sending. Please try again.', formEn);
             }
           });
         } else {
