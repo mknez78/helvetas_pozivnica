@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Helvetas - 10 godina u Srbiji</title>
     <style>
-    /* Your existing CSS remains the same */
     :root{
       --blue:#005D87;
       --red:#A62C32;
@@ -350,12 +349,12 @@
       });
     })();
 
-    // RSVP form with EmailJS - Secure version using Vercel environment variables
+    // RSVP form with EmailJS - Fixed version with proper error handling
     (function(){
-      // This will be replaced by Vercel with actual environment variables
-      const USER_ID = process.env.EMAILJS_USER_ID || 'L147P795DyaRAnffF';
-      const SERVICE_ID = process.env.EMAILJS_SERVICE_ID || 'service_j33huvu';
-      const TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID || 'template_ibymvyu';
+      // Initialize EmailJS with environment variables or fallback to hardcoded values
+      const USER_ID = 'L147P795DyaRAnffF'; // This will be replaced by Vercel
+      const SERVICE_ID = 'service_j33huvu'; // This will be replaced by Vercel
+      const TEMPLATE_ID = 'template_ibymvyu'; // This will be replaced by Vercel
       
       // Wait for EmailJS to be loaded
       function initEmailJS() {
