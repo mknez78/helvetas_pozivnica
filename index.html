@@ -469,147 +469,74 @@
       });
     })();
 
-    // RSVP form with EmailJS - Secure version using Vercel environment variables
+    // RSVP form — slanje preko Brevo API (Vercel serverless)
     (function(){
-      // For local testing, use default credentials
-      // For Vercel deployment, these will be replaced by environment variables
-      let USER_ID = 'L147P795DyaRAnffF';
-      let SERVICE_ID = 'service_j33huvu';
-      let TEMPLATE_ID = 'template_ibymvyu';
-      
-      // Check if we're in a Vercel environment (this is a simple check)
-      if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-        // Try to get environment variables from Vercel (this is a workaround)
+      const form = document.getElementById('rsvpForm');
+      const formEn = document.getElementById('rsvpFormEn');
+      const status = document.getElementById('status');
+      const statusEn = document.getElementById('statusEn');
+
+      function showStatus(el, type, text){
+        el.className = 'status ' + type;
+        el.textContent = text;
+        el.style.display = 'block';
+      }
+
+      async function handleSubmit(e, lang) {
+        e.preventDefault();
+
+        const f = e.target;
+        const st = lang === 'sr' ? status : statusEn;
+
+        // native validation
+        if (!f.checkValidity()){
+          f.reportValidity();
+          return;
+        }
+
+        // honeypot – ignore bots
+        const honey = f.querySelector('input[name="_honey"]');
+        if (honey && honey.value) return;
+
+        // build JSON payload
+        const fd = new FormData(f);
+        const data = {};
+        for (let [key, value] of fd.entries()) {
+          data[key] = value;
+        }
+        data.lang = lang;
+
+        showStatus(st, 'success', lang === 'sr' ? 'Šaljem prijavu...' : 'Sending RSVP...');
+
         try {
-          // This will work in Vercel environment but not in local testing
-          if (typeof process !== 'undefined' && process.env) {
-            USER_ID = process.env.EMAILJS_USER_ID || USER_ID;
-            SERVICE_ID = process.env.EMAILJS_SERVICE_ID || SERVICE_ID;
-            TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID || TEMPLATE_ID;
-          }
-        } catch(e) {
-          // If we can't access process.env, keep default values
-        }
-      }
-      
-      // Wait for EmailJS to be loaded
-      function initEmailJS() {
-        if (typeof emailjs !== 'undefined') {
-          // Initialize EmailJS with your actual User ID
-          emailjs.init(USER_ID);
-          
-          const form = document.getElementById('rsvpForm');
-          const formEn = document.getElementById('rsvpFormEn');
-          const status = document.getElementById('status');
-          const statusEn = document.getElementById('statusEn');
-
-          function showStatus(type, text, target){
-            const statusElement = target || (type === 'success' ? status : statusEn);
-            statusElement.className = 'status ' + (type === 'success' ? 'success' : 'error');
-            statusElement.textContent = text;
-            statusElement.style.display = 'block';
-          }
-
-          form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // native validation
-            if (!form.checkValidity()){
-              form.reportValidity();
-              return;
-            }
-
-            // honeypot – ignore bots
-            const honey = form.querySelector('input[name="_honey"]');
-            if (honey && honey.value) return;
-
-            // Prepare form data for EmailJS
-            const formData = new FormData(form);
-            const data = {};
-            for (let [key, value] of formData.entries()) {
-              data[key] = value;
-            }
-
-            showStatus('success','Šaljem prijavu...');
-
-            try {
-              // Send using EmailJS with your credentials
-              const response = await emailjs.send(
-                SERVICE_ID, 
-                TEMPLATE_ID, 
-                data, 
-                USER_ID
-              );
-              
-              if (response.status === 200) {
-                showStatus('success','Hvala — vaša prijava je zaprimljena.', form);
-                form.reset();
-              } else {
-                showStatus('error','Greška pri slanju: ' + response.text, form);
-              }
-            } catch (err){
-              console.error('EmailJS Error:', err);
-              showStatus('error','Greška pri slanju. Pokušajte ponovo.', form);
-            }
+          const res = await fetch('/api/send-rsvp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
           });
-          
-          formEn.addEventListener('submit', async (e) => {
-            e.preventDefault();
 
-            // native validation
-            if (!formEn.checkValidity()){
-              formEn.reportValidity();
-              return;
-            }
+          const result = await res.json();
 
-            // honeypot – ignore bots
-            const honey = formEn.querySelector('input[name="_honey"]');
-            if (honey && honey.value) return;
-
-            // Prepare form data for EmailJS
-            const formData = new FormData(formEn);
-            const data = {};
-            for (let [key, value] of formData.entries()) {
-              data[key] = value;
-            }
-
-            showStatus('success','Sending RSVP...', formEn);
-
-            try {
-              // Send using EmailJS with your credentials
-              const response = await emailjs.send(
-                SERVICE_ID, 
-                TEMPLATE_ID, 
-                data, 
-                USER_ID
-              );
-              
-              if (response.status === 200) {
-                showStatus('success','Thank you — your RSVP has been received.', formEn);
-                formEn.reset();
-              } else {
-                showStatus('error','Error sending: ' + response.text, formEn);
-              }
-            } catch (err){
-              console.error('EmailJS Error:', err);
-              showStatus('error','Error sending. Please try again.', formEn);
-            }
-          });
-        } else {
-          // If EmailJS is not loaded yet, try again after a short delay
-          setTimeout(initEmailJS, 100);
+          if (res.ok && result.success) {
+            showStatus(st, 'success', lang === 'sr'
+              ? 'Hvala — vaša prijava je zaprimljena.'
+              : 'Thank you — your RSVP has been received.');
+            f.reset();
+          } else {
+            showStatus(st, 'error', lang === 'sr'
+              ? 'Greška pri slanju. Pokušajte ponovo.'
+              : 'Error sending. Please try again.');
+          }
+        } catch (err) {
+          console.error('RSVP Error:', err);
+          showStatus(st, 'error', lang === 'sr'
+            ? 'Greška pri slanju. Pokušajte ponovo.'
+            : 'Error sending. Please try again.');
         }
       }
 
-      // Load EmailJS SDK and then initialize
-      if (typeof emailjs === 'undefined') {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-        script.onload = initEmailJS;
-        document.head.appendChild(script);
-      } else {
-        initEmailJS();
-      }
+      form.addEventListener('submit', (e) => handleSubmit(e, 'sr'));
+      formEn.addEventListener('submit', (e) => handleSubmit(e, 'en'));
     })();
     </script>
 </body>
